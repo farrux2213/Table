@@ -1,4 +1,4 @@
-import Item from "antd/es/list/Item";
+// import Item from "antd/es/list/Item";
 import { Component } from "react";
 
 const style_wrapper = {
@@ -37,6 +37,10 @@ class App extends Component {
     };
   }
 
+  uniqueId = () => {
+    return ++App.counter;
+  };
+
   render() {
     const onEdit = (value) => {
       this.setState({
@@ -60,19 +64,25 @@ class App extends Component {
         data: this.state.data.filter((item) => item.id !== value.id),
       });
     };
-    // wbegow
+
     const onAdd = (event) => {
       event.preventDefault();
       const newData = {
         name: event.target[0].value,
         surname: event.target[1].value,
         age: event.target[2].value,
-        id: this.state.data.length + 1,
+        id: this.uniqueId(),
       };
 
-      this.setState({
-        data: [...this.state.data, newData],
-      });
+      this.setState(
+        (prevState) => ({ data: [...prevState.data, newData] }),
+        () => {
+          console.log(this.state.data); // Log the updated data after state has been updated
+          event.target[0].value = "";
+          event.target[1].value = "";
+          event.target[2].value = "";
+        }
+      );
     };
 
     return (
@@ -154,8 +164,7 @@ class App extends Component {
                     )}
                   </td>
                   <td>
-                    {this.state.selectedColumn &&
-                    value.id === this.state.selectedColumn.id ? (
+                    {this.state.selectedColumn ? (
                       <button onClick={onSave}>Save</button>
                     ) : (
                       <button
@@ -179,19 +188,13 @@ class App extends Component {
             })}
           </tbody>
         </table>
-
-        <form
-          style={{
-            marginTop: "100px",
-          }}
-          onClick={() => {
-            onAdd();
-          }}
-        >
-          <input type="text" placeholder="Name"></input>
-          <input type="text" placeholder="Surname"></input>
-          <input type="text" placeholder="Age"></input>
-          <button type="submit">Submit</button>
+        <form style={{ marginTop: "100px" }} onSubmit={onAdd}>
+          <input required type="Name " placeholder="Name" />
+          <input required type="Surname" placeholder="Surname" />
+          <input required type="Age" placeholder="Age" />
+          <button required type="submit">
+            Submit
+          </button>
         </form>
       </div>
     );
